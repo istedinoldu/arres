@@ -1,0 +1,95 @@
+---
+import { Image } from "astro:assets";
+import logoImg from "../assets/logo.png";
+import TopBanner from "./TopBanner.astro";
+import { LOCALES, UI_STRINGS, type Locale } from "../i18n/ui";
+
+interface Props {
+  lang: Locale;
+  currentPath?: "home" | "news" | "contact" | "privacy";
+}
+
+const { lang, currentPath = "home" } = Astro.props;
+const t = UI_STRINGS[lang];
+const prefix = lang === "tr" ? "" : `/${lang}`;
+
+const getPageHref = (
+  locale: Locale,
+  page: "home" | "news" | "contact" | "privacy",
+) => {
+  const base = locale === "tr" ? "" : `/${locale}`;
+  if (page === "home") return `${base}/` || "/";
+  return `${base}/${page}`;
+};
+---
+
+<header class="sticky top-0 z-40 w-full bg-[#050811]/95 backdrop-blur">
+  <TopBanner lang={lang} />
+  <div class="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-4 px-4 py-4">
+    <a
+      href={`${prefix}/` || "/"}
+      class="flex items-center gap-3 text-lg font-bold tracking-tight text-white"
+    >
+      <Image
+        src={logoImg}
+        alt={t.siteTitle}
+        width={140}
+        height={40}
+        class="h-9 w-auto object-contain"
+        loading="eager"
+      />
+    </a>
+
+    <nav class="flex items-center gap-6 text-sm">
+      <a
+        href={getPageHref(lang, "home")}
+        class:list={[
+          "transition hover:text-amber-400",
+          currentPath === "home"
+            ? "font-semibold text-amber-400"
+            : "text-slate-300",
+        ]}
+      >
+        {t.nav.home}
+      </a>
+      <a
+        href={getPageHref(lang, "news")}
+        class:list={[
+          "transition hover:text-amber-400",
+          currentPath === "news"
+            ? "font-semibold text-amber-400"
+            : "text-slate-300",
+        ]}
+      >
+        {t.nav.news}
+      </a>
+      <a
+        href={getPageHref(lang, "contact")}
+        class:list={[
+          "transition hover:text-amber-400",
+          currentPath === "contact"
+            ? "font-semibold text-amber-400"
+            : "text-slate-300",
+        ]}
+      >
+        {t.nav.contact}
+      </a>
+    </nav>
+
+    <div class="flex items-center gap-1.5 text-xs">
+      {LOCALES.map((code) => (
+        <a
+          href={getPageHref(code, currentPath)}
+          class:list={[
+            "rounded px-2 py-1 uppercase transition",
+            code === lang
+              ? "bg-amber-500 font-semibold text-slate-950"
+              : "bg-slate-800 text-slate-300 hover:bg-slate-700",
+          ]}
+        >
+          {code}
+        </a>
+      ))}
+    </div>
+  </div>
+</header>

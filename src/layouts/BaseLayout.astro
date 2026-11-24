@@ -1,0 +1,112 @@
+---
+import "../styles/global.css";
+import SiteFooter from "../components/SiteFooter.astro";
+import CookieBanner from "../components/CookieBanner.astro";
+import {
+  LOCALES,
+  LOCALE_META,
+  RTL_LOCALES,
+  UI_STRINGS,
+  type Locale,
+} from "../i18n/ui";
+
+interface Props {
+  lang: Locale;
+  title: string;
+  description?: string;
+}
+
+const { lang, title, description } = Astro.props;
+const dir = RTL_LOCALES.includes(lang) ? "rtl" : "ltr";
+const metaDescription = description ?? LOCALE_META[lang].description;
+
+const siteOrigin = Astro.site
+  ? Astro.site.toString().replace(/\/$/, "")
+  : "https://arres.com.tr";
+const rawPathname = Astro.url.pathname;
+
+// Aktif sayfanın dil ön eki olmadan saf yolunu bulma (ör: /en/news -> /news, /ar/ -> /)
+const strippedPath = rawPathname.replace(/^\/(en|ru|ar|fa)(?=\/|$)/, "") || "/";
+
+const buildLocalizedUrl = (locale: Locale) => {
+  const prefix = locale === "tr" ? "" : `/${locale}`;
+  const cleanSuffix = strippedPath === "/" ? "/" : strippedPath;
+  return `${siteOrigin}${prefix}${cleanSuffix}`;
+};
+
+const canonicalUrl = buildLocalizedUrl(lang);
+const xDefaultUrl = buildLocalizedUrl("tr");
+
+const organizationSchema = {
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  name: UI_STRINGS[lang].siteTitle,
+  legalName:
+    "Arres Mühendislik Makine İmalat İthalat İhracat Sanayi Ticaret Limited Şirketi",
+  url: siteOrigin,
+  description: metaDescription,
+  address: {
+    "@type": "PostalAddress",
+    streetAddress:
+      "Yakacık Çarşı Mah. Kartal Cad. Kastelli Sanayi Sitesi C Blok No:64 İç Kapı No:59",
+    addressLocality: "Kartal",
+    addressRegion: "İstanbul",
+    addressCountry: "TR",
+  },
+  knowsLanguage: ["tr", "en", "ru", "ar", "fa"],
+  knowsAbout: [
+    "Tufting Carpet Machines",
+    "Quilting Machines",
+    "Custom Industrial Machinery Manufacturing",
+    "Robotic Welding and Machine Automation",
+    "CNC Machining and Machine Overhaul",
+  ],
+};
+---
+
+<!doctype html>
+<html lang={lang} dir={dir}>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{title}</title>
+    <meta name="description" content={metaDescription} />
+    <meta name="robots" content="index, follow" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+Arabic:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <link rel="canonical" href={canonicalUrl} />
+    {LOCALES.map((code) => (
+      <link
+        rel="alternate"
+        hreflang={LOCALE_META[code].hrefLang}
+        href={buildLocalizedUrl(code)}
+      />
+    ))}
+    <link rel="alternate" hreflang="x-default" href={xDefaultUrl} />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content={UI_STRINGS[lang].siteTitle} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={metaDescription} />
+    <meta property="og:url" content={canonicalUrl} />
+    <meta property="og:locale" content={lang} />
+
+    <script
+      type="application/ld+json"
+      set:html={JSON.stringify(organizationSchema)}
+    />
+  </head>
+  <body class="flex min-h-screen flex-col bg-slate-950 text-slate-100 antialiased">
+    <div class="flex-1">
+      <slot />
+    </div>
+    <SiteFooter lang={lang} />
+    <CookieBanner lang={lang} />
+  </body>
+</html>

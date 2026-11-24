@@ -1,0 +1,326 @@
+---
+import { Image } from "astro:assets";
+import arresLogo from "../assets/logo.png";
+import ihibLogo from "../assets/ihib.png";
+import { LOCALES, UI_STRINGS, type Locale } from "../i18n/ui";
+
+interface Props {
+    lang: Locale;
+    currentPath?: string;
+}
+
+const { lang, currentPath = "" } = Astro.props;
+const t = UI_STRINGS[lang];
+const prefix = lang === "tr" ? "" : `/${lang}`;
+const isRtl = lang === "ar" || lang === "fa";
+
+const getLocaleHref = (targetLocale: Locale) => {
+    const cleanPath = currentPath.replace(/^\/+/, "");
+    if (targetLocale === "tr") {
+        return cleanPath ? `/${cleanPath}` : "/";
+    }
+    return cleanPath ? `/${targetLocale}/${cleanPath}` : `/${targetLocale}`;
+};
+
+const QUICK_LINKS: Record<
+    Locale,
+    {
+        groupsTitle: string;
+        quickTitle: string;
+        contactTitle: string;
+        home: string;
+        news: string;
+        contact: string;
+        description: string;
+        ihibBadge: string;
+        expoBadge: string;
+        companyName: string;
+        address: string;
+        phone: string;
+        email: string;
+        copyright: string;
+    }
+> = {
+    tr: {
+        groupsTitle: "ÇALIŞMA GRUPLARI",
+        quickTitle: "HIZLI ERİŞİM",
+        contactTitle: "KURUMSAL İLETİŞİM",
+        home: "Anasayfa",
+        news: "Haberler",
+        contact: "İletişim",
+        description:
+            "Tuft halı makineleri, kapitone sistemleri, özel makine imalatı, robotik otomasyon ve CNC talaşlı imalat & revizyon çözümleri.",
+        ihibBadge: "İstanbul Halı İhracatçıları Birliği (İHİB) Üyesi",
+        expoBadge: "CFE 2027 • Salon 2, Stand 205",
+        companyName:
+            "Arres Mühendislik Makine İmalat İthalat İhracat Sanayi Ticaret Limited Şirketi",
+        address:
+            "Yakacık Çarşı Mah. Kartal Cad. Kastelli Sanayi Sitesi C Blok No:64 İç Kapı No:59 Kartal / İstanbul",
+        phone: "+90 532 785 05 76",
+        email: "info@arres.com.tr",
+        copyright:
+            "© 2026 Arres Mühendislik Makine İmalat İthalat İhracat Sanayi Ticaret Limited Şirketi. Tüm hakları saklıdır.",
+    },
+    en: {
+        groupsTitle: "WORKING GROUPS",
+        quickTitle: "QUICK LINKS",
+        contactTitle: "CORPORATE CONTACT",
+        home: "Home",
+        news: "News",
+        contact: "Contact",
+        description:
+            "Tufting carpet machines, quilting systems, custom machinery manufacturing, robotic automation, and CNC machining & overhaul solutions.",
+        ihibBadge: "Member of Istanbul Carpet Exporters' Association (İHİB)",
+        expoBadge: "CFE 2027 • Hall 2, Booth 205",
+        companyName:
+            "Arres Mühendislik Makine İmalat İthalat İhracat Sanayi Ticaret Limited Şirketi",
+        address:
+            "Yakacık Çarşı Mah. Kartal Cad. Kastelli Sanayi Sitesi C Blok No:64 İç Kapı No:59 Kartal / İstanbul",
+        phone: "+90 532 785 05 76",
+        email: "info@arres.com.tr",
+        copyright:
+            "© 2026 Arres Mühendislik Makine İmalat İthalat İhracat Sanayi Ticaret Limited Şirketi. All rights reserved.",
+    },
+    ru: {
+        groupsTitle: "НАПРАВЛЕНИЯ РАБОТЫ",
+        quickTitle: "НАВИГАЦИЯ",
+        contactTitle: "КОНТАКТНАЯ ИНФОРМАЦИЯ",
+        home: "Главная",
+        news: "Новости",
+        contact: "Контакты",
+        description:
+            "Тафтинговые ковровые машины, стегальные системы, производство специального оборудования, роботизация и механообработка с ЧПУ и модернизация.",
+        ihibBadge: "Член Стамбульской ассоциации экспортеров ковров (İHİB)",
+        expoBadge: "CFE 2027 • Зал 2, Стенд 205",
+        companyName:
+            "Arres Mühendislik Makine İmalat İthalat İhracat Sanayi Ticaret Limited Şirketi",
+        address:
+            "Yakacık Çarşı Mah. Kartal Cad. Kastelli Sanayi Sitesi C Blok No:64 İç Kapı No:59 Kartal / İstanbul",
+        phone: "+90 532 785 05 76",
+        email: "info@arres.com.tr",
+        copyright:
+            "© 2026 Arres Mühendislik Makine İmalat İthalat İhracat Sanayi Ticaret Limited Şirketi. Все права защищены.",
+    },
+    ar: {
+        groupsTitle: "مجموعات العمل",
+        quickTitle: "روابط سريعة",
+        contactTitle: "التواصل المؤسسي",
+        home: "الرئيسية",
+        news: "الأخبار",
+        contact: "تواصل معنا",
+        description:
+            "ماكينات تافت السجاد وأنظمة اللحف وتصنيع الماكينات الخاصة والأتمتة الروبوتية والتشغيل CNC وإعادة التأهيل.",
+        ihibBadge: "عضو اتحاد مصدري السجاد في إسطنبول (İHİB)",
+        expoBadge: "CFE 2027 • القاعة 2، الجناح 205",
+        companyName:
+            "Arres Mühendislik Makine İmalat İthalat İhracat Sanayi Ticaret Limited Şirketi",
+        address:
+            "Yakacık Çarşı Mah. Kartal Cad. Kastelli Sanayi Sitesi C Blok No:64 İç Kapı No:59 Kartal / İstanbul",
+        phone: "+90 532 785 05 76",
+        email: "info@arres.com.tr",
+        copyright:
+            "© 2026 Arres Mühendislik Makine İmalat İthalat İhracat Sanayi Ticaret Limited Şirketi. جميع الحقوق محفوظة.",
+    },
+    fa: {
+        groupsTitle: "گروه‌های کاری",
+        quickTitle: "دسترسی سریع",
+        contactTitle: "اطلاعات تماس",
+        home: "صفحه اصلی",
+        news: "اخبار",
+        contact: "تماس با ما",
+        description:
+            "ماشین‌آلات تافتینگ فرش، سیستم‌های لحف‌دوزی، ساخت ماشین‌آلات ویژه، اتوماسیون رباتیک و ماشین‌کاری CNC و بازسازی.",
+        ihibBadge: "عضو اتحادیه صادرکنندگان فرش استانبول (İHİB)",
+        expoBadge: "CFE 2027 • سالن ۲، غرفه ۲۰۵",
+        companyName:
+            "Arres Mühendislik Makine İmalat İthalat İhracat Sanayi Ticaret Limited Şirketi",
+        address:
+            "Yakacık Çarşı Mah. Kartal Cad. Kastelli Sanayi Sitesi C Blok No:64 İç Kapı No:59 Kartal / İstanbul",
+        phone: "+90 532 785 05 76",
+        email: "info@arres.com.tr",
+        copyright:
+            "© 2026 Arres Mühendislik Makine İmalat İthalat İhracat Sanayi Ticaret Limited Şirketi. تمامی حقوق محفوظ است.",
+    },
+};
+
+const labels = QUICK_LINKS[lang];
+---
+
+<footer
+    dir={isRtl ? "rtl" : "ltr"}
+    class="border-t border-slate-800/80 bg-[#050811] text-slate-300"
+>
+    <div class="mx-auto max-w-7xl px-4 pt-12 pb-8 sm:px-6 lg:px-8">
+        <!-- 4 Sütunlu Ana Yapı -->
+        <div class="grid grid-cols-1 gap-10 text-start md:grid-cols-2 lg:grid-cols-12 lg:gap-8">
+            <!-- 1. Sütun: Arres Logo + Açıklama + İHİB Rozet & Görsel + CFE Rozet -->
+            <div class="space-y-4 lg:col-span-4">
+                <a href={prefix || "/"} class="inline-block w-48">
+                    <Image
+                        src={arresLogo}
+                        alt="Arres Mühendislik"
+                        widths={[240, 480]}
+                        sizes="192px"
+                        class="h-auto w-full object-contain"
+                    />
+                </a>
+
+                <p class="max-w-sm text-sm leading-relaxed text-slate-300">
+                    {labels.description}
+                </p>
+
+                <div class="flex flex-col items-start gap-2.5 pt-1">
+                    <span class="inline-flex max-w-sm items-center rounded-md border border-slate-700/90 bg-slate-900/90 px-3 py-1.5 text-xs font-medium leading-snug text-slate-200">
+                        {labels.ihibBadge}
+                    </span>
+
+                    <!-- İHİB Görseli: Arres logosu ile aynı genişlikte (w-48) -->
+                    <div class="w-48 overflow-hidden rounded-lg border border-slate-700/80 bg-white p-2">
+                        <Image
+                            src={ihibLogo}
+                            alt="İstanbul Halı İhracatçıları Birliği (İHİB)"
+                            widths={[240, 480]}
+                            sizes="192px"
+                            class="h-auto w-full object-contain"
+                        />
+                    </div>
+
+                    <span class="inline-flex items-center rounded-md border border-amber-500/35 bg-amber-500/10 px-3 py-1.5 text-xs font-medium text-amber-300">
+                        {labels.expoBadge}
+                    </span>
+                </div>
+            </div>
+
+            <!-- 2. Sütun: Çalışma Grupları -->
+            <div class="space-y-3 lg:col-span-3">
+                <h3 class="text-xs font-bold tracking-wider uppercase text-amber-400">
+                    {labels.groupsTitle}
+                </h3>
+                <ul class="space-y-2.5 text-sm">
+                    {t.groups.map((group) => (
+                        <li>
+                            <a
+                                href={`${prefix}/#${group.id}`}
+                                class="text-slate-300 transition-colors hover:text-amber-300"
+                            >
+                                {group.title}
+                            </a>
+                        </li>
+                    ))}
+                </ul>
+            </div>
+
+            <!-- 3. Sütun: Hızlı Erişim + Dil Seçiciler -->
+            <div class="space-y-4 lg:col-span-2">
+                <h3 class="text-xs font-bold tracking-wider uppercase text-amber-400">
+                    {labels.quickTitle}
+                </h3>
+                <ul class="space-y-2.5 text-sm">
+                    <li>
+                        <a
+                            href={prefix || "/"}
+                            class="text-slate-300 transition-colors hover:text-amber-300"
+                        >
+                            {labels.home}
+                        </a>
+                    </li>
+                    <li>
+                        <a
+                            href={`${prefix}/news`}
+                            class="text-slate-300 transition-colors hover:text-amber-300"
+                        >
+                            {labels.news}
+                        </a>
+                    </li>
+                    <li>
+                        <a
+                            href={`${prefix}/contact`}
+                            class="text-slate-300 transition-colors hover:text-amber-300"
+                        >
+                            {labels.contact}
+                        </a>
+                    </li>
+                    <li>
+                        <a
+                            href={`${prefix}/privacy`}
+                            class="text-xs text-slate-300 transition-colors hover:text-amber-300"
+                        >
+                            {lang === "tr"
+                                ? "Gizlilik ve Çerez Politikası"
+                                : lang === "en"
+                                  ? "Privacy & Cookie Policy"
+                                  : lang === "ru"
+                                    ? "Политика конфиденциальности и cookie"
+                                    : lang === "ar"
+                                      ? "سياسة الخصوصية وملفات تعريف الارتباط"
+                                      : "سیاست حریم خصوصی و کوکی‌ها"}
+                        </a>
+                    </li>
+                </ul>
+
+                <div class="flex flex-wrap gap-1.5 pt-1">
+                    {LOCALES.map((loc) => {
+                        const active = loc === lang;
+                        return (
+                            <a
+                                href={getLocaleHref(loc)}
+                                class:list={[
+                                    "rounded border px-2.5 py-1 text-[11px] font-semibold uppercase transition-colors",
+                                    active
+                                        ? "border-amber-400/70 bg-amber-500/20 text-amber-300"
+                                        : "border-slate-700/80 bg-slate-900/70 text-slate-300 hover:border-slate-500 hover:text-white",
+                                ]}
+                            >
+                                {loc}
+                            </a>
+                        );
+                    })}
+                </div>
+            </div>
+
+            <!-- 4. Sütun: Kurumsal İletişim -->
+            <div class="space-y-3 lg:col-span-3">
+                <h3 class="text-xs font-bold tracking-wider uppercase text-amber-400">
+                    {labels.contactTitle}
+                </h3>
+                <p class="text-sm font-bold leading-snug text-white">
+                    {labels.companyName}
+                </p>
+                <p class="text-xs leading-relaxed text-slate-400">
+                    {labels.address}
+                </p>
+                <div class="space-y-1 pt-1 text-sm font-semibold text-amber-400">
+                    <div>
+                        <a
+                            href={`tel:${labels.phone.replace(/\s+/g, "")}`}
+                            class="transition-colors hover:text-amber-300"
+                        >
+                            {labels.phone}
+                        </a>
+                    </div>
+                    <div>
+                        <a
+                            href={`mailto:${labels.email}`}
+                            class="transition-colors hover:text-amber-300"
+                        >
+                            {labels.email}
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Alt Telif Satırı -->
+        <div class="mt-10 flex flex-col items-start justify-between gap-2 border-t border-slate-800/80 pt-6 text-xs text-slate-400 sm:flex-row sm:items-center">
+            <p>{labels.copyright}</p>
+            <a
+                href="https://arres.com.tr"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="text-slate-400 transition-colors hover:text-amber-300"
+            >
+                arres.com.tr
+            </a>
+        </div>
+    </div>
+</footer>

@@ -1,0 +1,130 @@
+---
+import { Image } from "astro:assets";
+import type { ImageMetadata } from "astro";
+import groupCarpetTextile from "../assets/group-carpet-textile.png";
+import groupSpecialMachines from "../assets/group-special-machines.png";
+import groupAutomationControl from "../assets/group-automation-control.png";
+import groupMachiningRevision from "../assets/group-machining-revision.png";
+import { UI_STRINGS, type Locale } from "../i18n/ui";
+
+interface Props {
+    lang: Locale;
+}
+
+const { lang } = Astro.props;
+const t = UI_STRINGS[lang];
+const prefix = lang === "tr" ? "" : `/${lang}`;
+const isRtl = lang === "ar" || lang === "fa";
+
+const SECTION_META: Record<Locale, { eyebrow: string; title: string }> = {
+    tr: {
+        eyebrow: "TEKNİK KAPASİTE & UZMANLIK",
+        title: "Çalışma Gruplarımız",
+    },
+    en: {
+        eyebrow: "TECHNICAL SCOPE & CAPABILITIES",
+        title: "Our Working Groups",
+    },
+    ru: {
+        eyebrow: "ТЕХНИЧЕСКИЕ КОМПЕТЕНЦИИ",
+        title: "Направления работы",
+    },
+    ar: {
+        eyebrow: "القدرات والتخصصات الهندسية",
+        title: "مجموعات العمل",
+    },
+    fa: {
+        eyebrow: "توانمندی‌ها و حوزه‌های تخصصی",
+        title: "گروه‌های کاری ما",
+    },
+};
+
+const groupImageMap: Record<string, ImageMetadata> = {
+    "carpet-textile": groupCarpetTextile,
+    "special-machines": groupSpecialMachines,
+    "automation-control": groupAutomationControl,
+    "machining-revision": groupMachiningRevision,
+};
+
+const meta = SECTION_META[lang];
+---
+
+<section dir={isRtl ? "rtl" : "ltr"} aria-labelledby="working-groups-heading">
+    <div class="mb-7 flex flex-wrap items-end justify-between gap-4 text-start">
+        <div>
+            <span class="inline-flex items-center rounded-sm border border-amber-400/35 bg-amber-400/10 px-3 py-1 text-[11px] font-bold tracking-widest uppercase text-amber-300">
+                {meta.eyebrow}
+            </span>
+            <h2
+                id="working-groups-heading"
+                class="mt-3 text-2xl font-bold tracking-tight text-white sm:text-3xl"
+            >
+                {meta.title}
+            </h2>
+        </div>
+    </div>
+
+    <div class="grid gap-6 md:grid-cols-2">
+        {t.groups.map((group, idx) => (
+            <article
+                id={group.id}
+                class:list={[
+                    "arres-soft-shadow arres-soft-shadow-hover flex flex-col justify-between rounded-xl border transition-all duration-300",
+                    idx === 0
+                        ? "border-amber-500/60 bg-[#091124] ring-1 ring-amber-500/20"
+                        : "border-slate-800/90 bg-[#070d1d] hover:-translate-y-0.5 hover:border-amber-500/40",
+                ]}
+            >
+                <div>
+                    {groupImageMap[group.id] && (
+                        <div class="w-full overflow-hidden rounded-t-xl border-b border-slate-800/80 bg-slate-950">
+                            <Image
+                                src={groupImageMap[group.id]}
+                                alt={group.title}
+                                width={940}
+                                height={788}
+                                class="aspect-[940/788] h-auto w-full object-contain"
+                            />
+                        </div>
+                    )}
+
+                    <div class="p-6 text-start">
+                        <div class="mb-3 flex items-center justify-between gap-2">
+                            <span class="text-xs font-bold tracking-wider uppercase text-amber-400">
+                                {t.groupLabel} 0{idx + 1}
+                            </span>
+                            {idx === 0 && (
+                                <span class="rounded-sm border border-amber-400/30 bg-amber-500/15 px-2.5 py-0.5 text-[11px] font-semibold text-amber-300">
+                                    ★ {t.featuredSpotlight}
+                                </span>
+                            )}
+                        </div>
+
+                        <h3 class="mb-4 text-xl font-bold text-white">
+                            {group.title}
+                        </h3>
+
+                        <ul class="space-y-2.5 text-sm text-slate-300">
+                            {group.items.map((item) => (
+                                <li class="flex items-start gap-2.5">
+                                    <span class="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-amber-400" />
+                                    <span>{item}</span>
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="border-t border-slate-800/80 px-6 py-4 text-start">
+                    <a
+                        href={`${prefix}/contact`}
+                        class="inline-flex items-center gap-1.5 text-xs font-semibold text-amber-400 transition-colors hover:text-cyan-300"
+                    >
+                        <span>{t.ctaText}</span>
+                        <span aria-hidden="true">{isRtl ? "←" : "→"}</span>
+                    </a>
+                </div>
+            </article>
+        ))}
+    </div>
+</section>

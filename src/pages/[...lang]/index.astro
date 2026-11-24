@@ -1,0 +1,31 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import SiteHeader from "../../components/SiteHeader.astro";
+import HeroSection from "../../components/HeroSection.astro";
+import ShowcaseSplitSection from "../../components/ShowcaseSplitSection.astro";
+import WorkingGroupsSection from "../../components/WorkingGroupsSection.astro";
+import LatestNewsSection from "@/components/LatestNewsSection.astro";
+import { LOCALES, UI_STRINGS, type Locale } from "../../i18n/ui";
+
+export function getStaticPaths() {
+  return LOCALES.map((locale) => ({
+    params: { lang: locale === "tr" ? undefined : locale },
+    props: { lang: locale },
+  }));
+}
+
+const props = Astro.props as { lang?: Locale };
+const lang: Locale = props.lang && props.lang in UI_STRINGS ? props.lang : "tr";
+const t = UI_STRINGS[lang];
+---
+
+<BaseLayout lang={lang} title={t.siteTitle}>
+  <SiteHeader lang={lang} currentPath="home" />
+
+  <main class="mx-auto max-w-6xl space-y-14 px-4 py-10 sm:space-y-16 sm:py-12">
+    <HeroSection lang={lang} />
+    <ShowcaseSplitSection lang={lang} vimeoId="1045237916" />
+    <WorkingGroupsSection lang={lang} />
+    <LatestNewsSection lang={lang} limit={3} variant="light" />
+  </main>
+</BaseLayout>

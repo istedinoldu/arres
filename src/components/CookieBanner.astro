@@ -1,0 +1,134 @@
+---
+import type { Locale } from "../i18n/ui";
+
+interface Props {
+    lang: Locale;
+}
+
+const { lang } = Astro.props;
+const isRtl = lang === "ar" || lang === "fa";
+const prefix = lang === "tr" ? "" : `/${lang}`;
+const policyHref = `${prefix}/privacy`;
+
+const COPY: Record<
+    Locale,
+    {
+        badge: string;
+        message: string;
+        policyLink: string;
+        necessaryOnly: string;
+        acceptAll: string;
+    }
+> = {
+    tr: {
+        badge: "ÇEREZ & GİZLİLİK",
+        message:
+            "Web sitemizin temel işlevlerini sürdürmek ve deneyimi iyileştirmek için çerezler ve yerel depolama kullanıyoruz.",
+        policyLink: "Gizlilik Politikası",
+        necessaryOnly: "Yalnızca Zorunlu",
+        acceptAll: "Kabul Et",
+    },
+    en: {
+        badge: "COOKIES & PRIVACY",
+        message:
+            "We use cookies and local storage to keep essential site functions running and improve your experience.",
+        policyLink: "Privacy Policy",
+        necessaryOnly: "Essential Only",
+        acceptAll: "Accept",
+    },
+    ru: {
+        badge: "COOKIE И КОНФИДЕНЦИАЛЬНОСТЬ",
+        message:
+            "Мы используем файлы cookie и локальное хранилище для обеспечения работы сайта и улучшения удобства просмотра.",
+        policyLink: "Политика конфиденциальности",
+        necessaryOnly: "Только необходимые",
+        acceptAll: "Принять",
+    },
+    ar: {
+        badge: "ملفات تعريف الارتباط والخصوصية",
+        message:
+            "نستخدم ملفات تعريف الارتباط والتخزين المحلي لضمان عمل الموقع بشكل أساسي وتحسين تجربة التصفح.",
+        policyLink: "سياسة الخصوصية",
+        necessaryOnly: "الضرورية فقط",
+        acceptAll: "موافق",
+    },
+    fa: {
+        badge: "کوکی‌ها و حریم خصوصی",
+        message:
+            "برای حفظ عملکردهای پایه سایت و بهبود تجربه کاربری از کوکی‌ها و حافظه محلی استفاده می‌کنیم.",
+        policyLink: "سیاست حریم خصوصی",
+        necessaryOnly: "فقط ضروری",
+        acceptAll: "تایید",
+    },
+};
+
+const t = COPY[lang];
+---
+
+<div
+    id="arres-cookie-banner"
+    dir={isRtl ? "rtl" : "ltr"}
+    role="region"
+    aria-label={t.badge}
+    class="fixed right-0 bottom-0 left-0 z-50 hidden border-t border-amber-500/30 bg-[#050811]/95 px-4 py-3.5 text-xs text-slate-200 shadow-2xl backdrop-blur sm:px-6 lg:px-8"
+>
+    <div class="mx-auto flex max-w-7xl flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <div class="space-y-1 text-start">
+            <div class="flex flex-wrap items-center gap-2">
+                <span class="inline-flex items-center rounded-sm border border-amber-400/35 bg-amber-400/10 px-2 py-0.5 text-[10px] font-bold tracking-wider uppercase text-amber-300">
+                    {t.badge}
+                </span>
+                <a
+                    href={policyHref}
+                    class="font-semibold text-amber-400 underline decoration-amber-400/40 underline-offset-4 transition-colors hover:text-cyan-300"
+                >
+                    {t.policyLink}
+                </a>
+            </div>
+            <p class="max-w-3xl leading-relaxed text-slate-300">{t.message}</p>
+        </div>
+
+        <div class="flex shrink-0 flex-wrap items-center gap-2.5">
+            <button
+                type="button"
+                data-cookie-choice="essential"
+                class="cursor-pointer rounded-md border border-slate-700 bg-slate-900 px-3.5 py-2 text-xs font-semibold text-slate-200 transition-colors hover:border-slate-500 hover:text-white"
+            >
+                {t.necessaryOnly}
+            </button>
+            <button
+                type="button"
+                data-cookie-choice="all"
+                class="cursor-pointer rounded-md bg-amber-400 px-4 py-2 text-xs font-bold text-slate-950 transition-colors hover:bg-amber-300"
+            >
+                {t.acceptAll}
+            </button>
+        </div>
+    </div>
+</div>
+
+<script is:inline>
+    (() => {
+        const STORAGE_KEY = "arres_cookie_consent_v1";
+        const banner = document.getElementById("arres-cookie-banner");
+        if (!banner) return;
+
+        try {
+            const saved = window.localStorage.getItem(STORAGE_KEY);
+            if (!saved) {
+                banner.classList.remove("hidden");
+            }
+
+            banner.querySelectorAll("[data-cookie-choice]").forEach((btn) => {
+                btn.addEventListener("click", () => {
+                    const choice =
+                        btn.getAttribute("data-cookie-choice") || "essential";
+                    window.localStorage.setItem(STORAGE_KEY, choice);
+                    banner.classList.add("hidden");
+                });
+            });
+        } catch {
+            banner.classList.remove("hidden");
+        }
+    })();
+</script>

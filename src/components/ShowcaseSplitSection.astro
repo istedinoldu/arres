@@ -1,0 +1,195 @@
+---
+import { Image } from "astro:assets";
+import cfe2027Img from "../assets/news/arres-cfe-2027.jpg";
+import type { Locale } from "../i18n/ui";
+
+interface Props {
+    lang: Locale;
+    vimeoId?: string;
+}
+
+const { lang, vimeoId = "1045237916" } = Astro.props;
+const prefix = lang === "tr" ? "" : `/${lang}`;
+const isRtl = lang === "ar" || lang === "fa";
+
+const COPY: Record<
+    Locale,
+    {
+        videoTag: string;
+        videoTitle: string;
+        videoDesc: string;
+        panelTag: string;
+        panelTitle: string;
+        panelDesc: string;
+        panelHighlights: string[];
+        panelCta: string;
+    }
+> = {
+    tr: {
+        videoTag: "ÜRETİM & UYGULAMA VİDEOSU",
+        videoTitle: "Arres Mühendislik Makine Çözümleri",
+        videoDesc:
+            "Tuft halı makineleri, özel makine imalatı ve saha mühendisliği süreçlerimizi inceleyin.",
+        panelTag: "FUAR & SAHA ORGANİZASYONU",
+        panelTitle: "CFE Carpet & Flooring Expo 2027 • Salon 2, Stand 205",
+        panelDesc:
+            "Halı ve tuft sektörüne yönelik makine ve mühendislik çözümlerimizi standımızda yakından inceleyebilirsiniz.",
+        panelHighlights: [
+            "Salon 2 • Stand 205 teknik görüşme alanı",
+            "Özel makine imalatı ve hat revizyon danışmanlığı",
+            "İstanbul Halı İhracatçıları Birliği (İHİB) üyesi kurumsal yapı",
+        ],
+        panelCta: "Fuar Detayını Aç",
+    },
+    en: {
+        videoTag: "PRODUCTION & FIELD VIDEO",
+        videoTitle: "Arres Engineering Machinery Solutions",
+        videoDesc:
+            "Explore our tufting carpet machinery, bespoke industrial fabrication, and engineering workflows.",
+        panelTag: "EXPO & FIELD PRESENCE",
+        panelTitle: "CFE Carpet & Flooring Expo 2027 • Hall 2, Booth 205",
+        panelDesc:
+            "Visit our booth to review our tufting, carpet machinery, and industrial engineering solutions in person.",
+        panelHighlights: [
+            "Hall 2 • Booth 205 technical meeting area",
+            "Custom machinery build and line overhaul consulting",
+            "Member of Istanbul Carpet Exporters' Association (İHİB)",
+        ],
+        panelCta: "View Expo Brief",
+    },
+    ru: {
+        videoTag: "ВИДЕО ПРОИЗВОДСТВА",
+        videoTitle: "Машиностроительные решения Arres Mühendislik",
+        videoDesc:
+            "Познакомьтесь с нашим тафтинговым оборудованием, спецпроизводством и инженерными процессами.",
+        panelTag: "ВЫСТАВКА И ПРОЕКТЫ",
+        panelTitle: "CFE Carpet & Flooring Expo 2027 • Зал 2, Стенд 205",
+        panelDesc:
+            "Посетите наш стенд, чтобы обсудить оборудование для тафтинга, ковровой индустрии и спецзаказы.",
+        panelHighlights: [
+            "Зал 2 • Стенд 205 — зона технических переговоров",
+            "Изготовление спецтехники и модернизация линий",
+            "Член Стамбульской ассоциации экспортеров ковров (İHİB)",
+        ],
+        panelCta: "Подробнее о выставке",
+    },
+    ar: {
+        videoTag: "فيديو الإنتاج والتطبيق",
+        videoTitle: "حلول أريس للهندسة والماكينات",
+        videoDesc:
+            "تعرّف على ماكينات التافت للسجاد والتصنيع المخصص والحلول الهندسية الصناعية لدينا.",
+        panelTag: "المعرض والحضور الميداني",
+        panelTitle:
+            "معرض CFE Carpet & Flooring Expo 2027 • القاعة 2، الجناح 205",
+        panelDesc:
+            "تفضلوا بزيارة جناحنا للاطلاع عن قرب على حلولنا في معدات التافت والسجاد والهندسة الصناعية.",
+        panelHighlights: [
+            "القاعة 2 • الجناح 205 لمناقشة المشاريع الفنية",
+            "تصنيع الماكينات الخاصة وتأهيل خطوط الإنتاج",
+            "عضو اتحاد مصدري السجاد في إسطنبول (İHİB)",
+        ],
+        panelCta: "تفاصيل المعرض",
+    },
+    fa: {
+        videoTag: "ویدئوی تولید و اجرا",
+        videoTitle: "راهکارهای ماشین‌سازی آرس مهندسی",
+        videoDesc:
+            "با ماشین‌آلات تافتینگ فرش، ساخت سفارشی و فرآیندهای مهندسی صنعتی ما آشنا شوید.",
+        panelTag: "نمایشگاه و حضور میدانی",
+        panelTitle:
+            "نمایشگاه CFE Carpet & Flooring Expo 2027 • سالن ۲، غرفه ۲۰۵",
+        panelDesc:
+            "برای بررسی راهکارهای ماشین‌آلات تافتینگ، فرش و مهندسی صنعتی در غرفه ما همراه شما هستیم.",
+        panelHighlights: [
+            "سالن ۲ • غرفه ۲۰۵ برای گفتگوهای فنی و پروژه‌ها",
+            "ساخت ماشین‌آلات اختصاصی و بازسازی خطوط",
+            "عضو اتحادیه صادرکنندگان فرش استانبول (İHİB)",
+        ],
+        panelCta: "مشاهده جزئیات نمایشگاه",
+    },
+};
+
+const content = COPY[lang];
+const embedUrl = `https://player.vimeo.com/video/${vimeoId}?title=0&byline=0&portrait=0&dnt=1`;
+const expoHref = `${prefix}/news/${lang}/arres-cfe-2027`;
+---
+
+<section
+    dir={isRtl ? "rtl" : "ltr"}
+    aria-label={content.videoTitle}
+    class="grid grid-cols-1 gap-6 lg:grid-cols-12 lg:items-stretch"
+>
+    <!-- Sol / Başlangıç Sütunu: Video Vitrin (7 Sütun) -->
+    <div class="arres-soft-shadow arres-soft-shadow-hover flex flex-col rounded-2xl border border-slate-800/90 bg-[#070d1d] transition-all duration-300 lg:col-span-7">
+        <div class="relative aspect-video w-full overflow-hidden rounded-t-2xl bg-slate-950">
+            <iframe
+                src={embedUrl}
+                title={content.videoTitle}
+                class="h-full w-full border-0"
+                allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media"
+                allowfullscreen
+                loading="lazy"
+            />
+        </div>
+
+        <div class="flex flex-1 flex-col justify-between p-5 text-start sm:p-6">
+            <div>
+                <span class="inline-flex items-center rounded-sm border border-cyan-400/30 bg-cyan-400/10 px-2.5 py-0.5 text-[10px] font-bold tracking-wider uppercase text-cyan-300">
+                    {content.videoTag}
+                </span>
+                <h2 class="mt-2.5 text-lg font-bold text-white sm:text-xl">
+                    {content.videoTitle}
+                </h2>
+                <p class="mt-1.5 text-sm leading-relaxed text-slate-300">
+                    {content.videoDesc}
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sağ / Bitiş Sütunu: Kurumsal & Fuar Özeti (5 Sütun) -->
+    <div class="arres-soft-shadow arres-soft-shadow-hover flex flex-col justify-between rounded-2xl border border-amber-500/30 bg-[#070d1d] p-5 text-start transition-all duration-300 sm:p-6 lg:col-span-5">
+        <div>
+            <div class="relative mb-5 aspect-[16/9] w-full overflow-hidden rounded-xl border border-slate-800 bg-slate-950">
+                <Image
+                    src={cfe2027Img}
+                    alt={content.panelTitle}
+                    widths={[480, 768]}
+                    sizes="(max-width: 1024px) 100vw, 40vw"
+                    class="h-full w-full object-cover"
+                />
+            </div>
+
+            <span class="inline-flex items-center rounded-sm border border-amber-400/35 bg-amber-400/10 px-2.5 py-0.5 text-[10px] font-bold tracking-wider uppercase text-amber-300">
+                {content.panelTag}
+            </span>
+
+            <h2 class="mt-2.5 text-lg font-bold leading-snug text-white">
+                {content.panelTitle}
+            </h2>
+
+            <p class="mt-2 text-sm leading-relaxed text-slate-300">
+                {content.panelDesc}
+            </p>
+
+            <ul class="mt-4 space-y-2 border-t border-slate-800/90 pt-4 text-xs text-slate-300 sm:text-sm">
+                {content.panelHighlights.map((item) => (
+                    <li class="flex items-start gap-2.5">
+                        <span class="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-amber-400" />
+                        <span>{item}</span>
+                    </li>
+                ))}
+            </ul>
+        </div>
+
+        <div class="mt-6">
+            <a
+                href={expoHref}
+                class="inline-flex items-center gap-2 rounded-md border border-amber-400/50 bg-amber-400/10 px-4 py-2 text-xs font-semibold text-amber-300 transition-colors hover:border-amber-400 hover:bg-amber-400 hover:text-slate-950"
+            >
+                <span>{content.panelCta}</span>
+                <span aria-hidden="true">{isRtl ? "←" : "→"}</span>
+            </a>
+        </div>
+    </div>
+</section>

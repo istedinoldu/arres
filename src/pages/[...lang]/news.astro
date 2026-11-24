@@ -1,0 +1,157 @@
+---
+import { Image } from "astro:assets";
+import { getCollection } from "astro:content";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import SiteHeader from "../../components/SiteHeader.astro";
+import { LOCALES, UI_STRINGS, type Locale } from "../../i18n/ui";
+
+export function getStaticPaths() {
+  return LOCALES.map((locale) => ({
+    params: { lang: locale === "tr" ? undefined : locale },
+    props: { lang: locale },
+  }));
+}
+
+const props = Astro.props as { lang?: Locale };
+const lang: Locale = props.lang && props.lang in UI_STRINGS ? props.lang : "tr";
+const t = UI_STRINGS[lang];
+const prefix = lang === "tr" ? "" : `/${lang}`;
+const isRtl = lang === "ar" || lang === "fa";
+
+const toPostSlug = (rawId: string) =>
+  rawId.replace(/\.(md|mdx)$/i, "").replace(/^\/+|\/+$/g, "");
+
+const allNews = await getCollection("news", ({ data }) => data.locale === lang);
+const sortedNews = allNews.sort(
+  (a, b) => new Date(b.data.date).getTime() - new Date(a.data.date).getTime(),
+);
+
+const badgeMap: Record<Locale, string> = {
+  tr: "VERİ BANKASI & HABERLER",
+  en: "KNOWLEDGE BASE & NEWS",
+  ru: "БАЗА ЗНАНИЙ И НОВОСТИ",
+  ar: "قاعدة المعرفة والأخبار",
+  fa: "پایگاه دانش و اخبار",
+};
+
+const readMoreMap: Record<Locale, string> = {
+  tr: "Yazıyı Oku",
+  en: "Read Article",
+  ru: "Читать статью",
+  ar: "اقرأ المقال",
+  fa: "مطالعه مطلب",
+};
+
+const emptyStateMap: Record<Locale, string> = {
+  tr: "Bu dilde henüz yayınlanmış haber bulunmuyor.",
+  en: "No news articles published in this language yet.",
+  ru: "Новостей на этом языке пока нет.",
+  ar: "لا توجد أخبار منشورة بهذه اللغة حاليًا.",
+  fa: "هنوز خبری به این زبان منتشر نشده است.",
+};
+
+const formatDate = (dateStr: string, locale: Locale) => {
+  const date = new Date(dateStr);
+  if (Number.isNaN(date.getTime())) return dateStr;
+  const intlMap: Record<Locale, string> = {
+    tr: "tr-TR",
+    en: "en-US",
+    ru: "ru-RU",
+    ar: "ar-EG",
+    fa: "fa-IR",
+  };
+  return new Intl.DateTimeFormat(intlMap[locale], {
+    day: "numeric",
+    month: "short",
+    year: "numeric",
+  }).format(date);
+};
+---
+
+<BaseLayout lang={lang} title={`${t.nav.news} — ${t.siteTitle}`}>
+  <SiteHeader lang={lang} currentPath="news" />
+
+  <main
+    dir={isRtl ? "rtl" : "ltr"}
+    class="mx-auto max-w-6xl space-y-8 px-4 py-10 sm:py-12"
+  >
+    <div class="text-start">
+      <span class="inline-flex items-center rounded-sm border border-amber-400/35 bg-amber-400/10 px-3 py-1 text-[11px] font-bold tracking-widest uppercase text-amber-300">
+        {badgeMap[lang]}
+      </span>
+      <h1 class="mt-3 text-3xl font-bold tracking-tight text-white">
+        {t.nav.news}
+      </h1>
+    </div>
+
+    {sortedNews.length === 0 ? (
+      <p class="rounded-xl border border-slate-800 bg-slate-900/60 p-6 text-sm text-slate-300">
+        {emptyStateMap[lang]}
+      </p>
+    ) : (
+      <div class="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+        {sortedNews.map((item) => {
+          const postHref = `${prefix}/news/${toPostSlug(item.id)}`;
+
+          return (
+            <article class="arres-soft-shadow arres-soft-shadow-hover group flex flex-col justify-between rounded-xl border border-slate-200/90 bg-white transition-all duration-300 hover:-translate-y-1 hover:border-amber-500/50">
+              <div>
+                <!-- Meta Satırı -->
+                <div class="flex items-center justify-between gap-2 px-5 pt-4 pb-3 text-xs font-medium">
+                  <span class="font-semibold tracking-wide text-amber-700">
+                    {badgeMap[lang]}
+                  </span>
+                  <time datetime={item.data.date} class="text-slate-500">
+                    {formatDate(item.data.date, lang)}
+                  </time>
+                </div>
+
+                <!-- Alttan Çapraz Yukarı Kesik Maskeli Görsel -->
+                {item.data.coverImage && (
+                  <a
+                    href={postHref}
+                    class="news-diagonal-mask relative block aspect-[16/10] w-full overflow-hidden bg-slate-100"
+                  >
+                    <Image
+                      src={item.data.coverImage}
+                      alt={item.data.coverAlt || item.data.title}
+                      widths={[480, 768]}
+                      sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                      class="h-full w-full object-cover transition-transform duration-300 group-hover:scale-[1.04]"
+                    />
+                  </a>
+                )}
+
+                <!-- İçerik -->
+                <div class="px-5 pt-4 pb-4 text-start">
+                  <h2 class="line-clamp-2 text-lg font-bold leading-snug text-slate-900 transition-colors group-hover:text-amber-700">
+                    <a href={postHref}>{item.data.title}</a>
+                  </h2>
+                  <p class="mt-2.5 line-clamp-3 text-sm leading-relaxed text-slate-600">
+                    {item.data.summary}
+                  </p>
+                </div>
+              </div>
+
+              <!-- Alt Buton -->
+              <div class="px-5 pt-1 pb-5 text-start">
+                <a
+                  href={postHref}
+                  class="inline-flex items-center justify-center rounded-md border border-slate-900 bg-slate-900 px-4 py-2 text-xs font-semibold text-white transition-colors hover:border-amber-600 hover:bg-amber-600"
+                >
+                  {readMoreMap[lang]}
+                </a>
+              </div>
+            </article>
+          );
+        })}
+      </div>
+    )}
+  </main>
+</BaseLayout>
+
+<style>
+  .news-diagonal-mask {
+    clip-path: polygon(0 0, 100% 0, 100% 92%, 0 100%);
+  }
+</style>

@@ -1,0 +1,264 @@
+---
+import { Image } from "astro:assets";
+import { getCollection } from "astro:content";
+import type { Locale } from "../i18n/ui";
+
+interface Props {
+    lang: Locale;
+    limit?: number;
+    badgeLabel?: string;
+    heading?: string;
+    viewAllLabel?: string;
+    readMoreLabel?: string;
+    variant?: "dark" | "light";
+}
+
+const {
+    lang,
+    limit = 3,
+    badgeLabel,
+    heading,
+    viewAllLabel,
+    readMoreLabel,
+    variant = "light",
+} = Astro.props;
+
+const isRtl = lang === "ar" || lang === "fa";
+const isDark = variant === "dark";
+
+const COPY: Record<
+    Locale,
+    { badge: string; heading: string; viewAll: string; readMore: string }
+> = {
+    tr: {
+        badge: "VERİ BANKASI & HABERLER",
+        heading: "Son Haberler ve Teknik Yazılar",
+        viewAll: "Tüm Yazılar",
+        readMore: "Yazıyı Oku",
+    },
+    en: {
+        badge: "KNOWLEDGE BASE & NEWS",
+        heading: "Latest News & Technical Articles",
+        viewAll: "All Articles",
+        readMore: "Read Article",
+    },
+    ru: {
+        badge: "БАЗА ЗНАНИЙ И НОВОСТИ",
+        heading: "Последние новости и статьи",
+        viewAll: "Все статьи",
+        readMore: "Читать статью",
+    },
+    ar: {
+        badge: "قاعدة المعرفة والأخبار",
+        heading: "أحدث الأخبار والمقالات التقنية",
+        viewAll: "جميع المقالات",
+        readMore: "اقرأ المقال",
+    },
+    fa: {
+        badge: "پایگاه دانش و اخبار",
+        heading: "آخرین اخبار و مقالات فنی",
+        viewAll: "همه مطالب",
+        readMore: "مطالعه مطلب",
+    },
+};
+
+const labels = {
+    badge: badgeLabel ?? COPY[lang].badge,
+    heading: heading ?? COPY[lang].heading,
+    viewAll: viewAllLabel ?? COPY[lang].viewAll,
+    readMore: readMoreLabel ?? COPY[lang].readMore,
+};
+
+const toPostSlug = (rawId: string) =>
+    rawId.replace(/\.(md|mdx)$/i, "").replace(/^\/+|\/+$/g, "");
+
+const prefix = lang === "tr" ? "" : `/${lang}`;
+const newsBase = `${prefix}/news`;
+
+const posts = (await getCollection("news"))
+    .filter((entry) => entry.data.locale === lang)
+    .sort(
+        (a, b) =>
+            new Date(b.data.date).getTime() - new Date(a.data.date).getTime(),
+    )
+    .slice(0, limit);
+
+const formatDate = (dateStr: string, locale: Locale) => {
+    const date = new Date(dateStr);
+    if (Number.isNaN(date.getTime())) return dateStr;
+    const intlMap: Record<Locale, string> = {
+        tr: "tr-TR",
+        en: "en-US",
+        ru: "ru-RU",
+        ar: "ar-EG",
+        fa: "fa-IR",
+    };
+    return new Intl.DateTimeFormat(intlMap[locale], {
+        day: "numeric",
+        month: "short",
+        year: "numeric",
+    }).format(date);
+};
+---
+
+<section
+    dir={isRtl ? "rtl" : "ltr"}
+    aria-labelledby="latest-news-heading"
+    class:list={[
+        "rounded-2xl border p-6 transition-all duration-300 sm:p-8 lg:p-10",
+        isDark
+            ? "arres-soft-shadow arres-soft-shadow-hover border-slate-800/90 bg-[#070d1d] text-slate-100"
+            : "arres-soft-shadow arres-soft-shadow-hover border-slate-200/90 bg-slate-50 text-slate-900",
+    ]}
+>
+    <!-- Üst Başlık Satırı -->
+    <div class="mb-8 flex flex-wrap items-end justify-between gap-4 text-start">
+        <div>
+            <span
+                class:list={[
+                    "inline-flex items-center rounded-sm border px-3 py-1 text-[11px] font-bold tracking-widest uppercase",
+                    isDark
+                        ? "border-amber-400/35 bg-amber-400/10 text-amber-300"
+                        : "border-amber-500/30 bg-amber-50 text-amber-700",
+                ]}
+            >
+                {labels.badge}
+            </span>
+
+            <h2
+                id="latest-news-heading"
+                class:list={[
+                    "mt-3 text-2xl font-bold tracking-tight sm:text-3xl",
+                    isDark ? "text-white" : "text-slate-900",
+                ]}
+            >
+                {labels.heading}
+            </h2>
+        </div>
+
+        <a
+            href={newsBase}
+            class:list={[
+                "group inline-flex items-center gap-2 text-sm font-semibold transition-colors",
+                isDark
+                    ? "text-amber-400 hover:text-cyan-300"
+                    : "text-slate-800 hover:text-amber-700",
+            ]}
+        >
+            <span>{labels.viewAll}</span>
+            <span
+                aria-hidden="true"
+                class="transition-transform duration-200 group-hover:translate-x-1 rtl:group-hover:-translate-x-1"
+            >
+                {isRtl ? "←" : "→"}
+            </span>
+        </a>
+    </div>
+
+    <!-- 3 Sütunlu Kart Izgarası -->
+    <div class="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+        {posts.map((post) => {
+            const slug = toPostSlug(post.id);
+            const href = `${newsBase}/${slug}`;
+
+            return (
+                <article
+                    class:list={[
+                        "group flex flex-col justify-between rounded-xl border transition-all duration-300 hover:-translate-y-1",
+                        isDark
+                            ? "border-slate-800 bg-[#0b1224] hover:border-amber-400/50"
+                            : "border-slate-200/90 bg-white shadow-sm hover:border-amber-500/50 hover:shadow-md",
+                    ]}
+                >
+                    <div>
+                        <!-- Meta Satırı -->
+                        <div class="flex items-center justify-between gap-2 px-5 pt-4 pb-3 text-xs font-medium">
+                            <span
+                                class:list={[
+                                    "font-semibold tracking-wide",
+                                    isDark
+                                        ? "text-amber-400"
+                                        : "text-amber-700",
+                                ]}
+                            >
+                                {labels.badge}
+                            </span>
+                            <time
+                                datetime={post.data.date}
+                                class={
+                                    isDark ? "text-slate-400" : "text-slate-500"
+                                }
+                            >
+                                {formatDate(post.data.date, lang)}
+                            </time>
+                        </div>
+
+                        <!-- Alttan Çapraz Yukarı Kesik Maskeli Görsel -->
+                        {post.data.coverImage && (
+                            <a
+                                href={href}
+                                class:list={[
+                                    "news-diagonal-mask relative block aspect-[16/10] w-full overflow-hidden",
+                                    isDark ? "bg-slate-900" : "bg-slate-100",
+                                ]}
+                            >
+                                <Image
+                                    src={post.data.coverImage}
+                                    alt={post.data.coverAlt ?? post.data.title}
+                                    widths={[480, 768]}
+                                    sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                                    class="h-full w-full object-cover transition-transform duration-300 group-hover:scale-[1.04]"
+                                />
+                            </a>
+                        )}
+
+                        <!-- İçerik -->
+                        <div class="px-5 pt-4 pb-4 text-start">
+                            <h3
+                                class:list={[
+                                    "line-clamp-2 text-lg font-bold leading-snug transition-colors",
+                                    isDark
+                                        ? "text-white group-hover:text-amber-300"
+                                        : "text-slate-900 group-hover:text-amber-700",
+                                ]}
+                            >
+                                <a href={href}>{post.data.title}</a>
+                            </h3>
+                            <p
+                                class:list={[
+                                    "mt-2.5 line-clamp-3 text-sm leading-relaxed",
+                                    isDark
+                                        ? "text-slate-300/90"
+                                        : "text-slate-600",
+                                ]}
+                            >
+                                {post.data.summary}
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Alt Buton -->
+                    <div class="px-5 pt-1 pb-5 text-start">
+                        <a
+                            href={href}
+                            class:list={[
+                                "inline-flex items-center justify-center rounded-md border px-4 py-2 text-xs font-semibold transition-colors",
+                                isDark
+                                    ? "border-slate-700 bg-slate-900/90 text-slate-100 hover:border-amber-400 hover:bg-amber-400 hover:text-slate-950"
+                                    : "border-slate-900 bg-slate-900 text-white hover:border-amber-600 hover:bg-amber-600",
+                            ]}
+                        >
+                            {labels.readMore}
+                        </a>
+                    </div>
+                </article>
+            );
+        })}
+    </div>
+</section>
+
+<style>
+    .news-diagonal-mask {
+        clip-path: polygon(0 0, 100% 0, 100% 92%, 0 100%);
+    }
+</style>

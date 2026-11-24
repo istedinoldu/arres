@@ -1,0 +1,136 @@
+---
+import { Image } from "astro:assets";
+import { getCollection, render, type CollectionEntry } from "astro:content";
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+import SiteHeader from "../../../components/SiteHeader.astro";
+import { LOCALES, UI_STRINGS, type Locale } from "../../../i18n/ui";
+
+export async function getStaticPaths() {
+    const toPostSlug = (rawId: string) =>
+        rawId.replace(/\.(md|mdx)$/i, "").replace(/^\/+|\/+$/g, "");
+
+    const allNews = await getCollection("news");
+    const paths: Array<{
+        params: { lang: string | undefined; slug: string };
+        props: { lang: Locale; post: CollectionEntry<"news"> };
+    }> = [];
+
+    for (const locale of LOCALES) {
+        const langParam = locale === "tr" ? undefined : locale;
+        const localePosts = allNews.filter(
+            (entry) => entry.data.locale === locale,
+        );
+
+        for (const post of localePosts) {
+            const slug = toPostSlug(post.id);
+            if (!slug) continue;
+
+            paths.push({
+                params: {
+                    lang: langParam,
+                    slug,
+                },
+                props: {
+                    lang: locale,
+                    post,
+                },
+            });
+        }
+    }
+
+    return paths;
+}
+
+const props = Astro.props as { lang?: Locale; post: CollectionEntry<"news"> };
+const lang: Locale = props.lang && props.lang in UI_STRINGS ? props.lang : "tr";
+const { post } = props;
+const t = UI_STRINGS[lang];
+const prefix = lang === "tr" ? "" : `/${lang}`;
+const newsListHref = `${prefix}/news` || "/news";
+
+const { Content } = await render(post);
+
+const backLabelMap: Record<Locale, string> = {
+    tr: "← Tüm Haberlere Dön",
+    en: "← Back to All News",
+    ru: "← Назад ко всем новостям",
+    ar: "العودة إلى جميع الأخبار →",
+    fa: "بازگشت به همه اخبار →",
+};
+
+const ctaLabelMap: Record<Locale, string> = {
+    tr: "Bu Konuda Teklif / Bilgi Alın",
+    en: "Request Quote / More Information",
+    ru: "Запросить предложение / Информацию",
+    ar: "طلب عرض سعر أو معلومات إضافية",
+    fa: "درخواست پیش‌فاکتور یا اطلاعات بیشتر",
+};
+---
+
+<BaseLayout
+    lang={lang}
+    title={`${post.data.title} — ${t.siteTitle}`}
+    description={post.data.summary}
+>
+    <SiteHeader lang={lang} currentPath="news" />
+
+    <main class="mx-auto max-w-4xl space-y-8 px-4 py-10">
+        <div>
+            <a
+                href={newsListHref}
+                class="inline-flex items-center text-sm font-medium text-amber-400 transition hover:text-amber-300"
+            >
+                {backLabelMap[lang]}
+            </a>
+        </div>
+
+        <article class="rounded-2xl border border-slate-800 bg-slate-900/80 p-6 sm:p-10">
+            <header class="border-b border-slate-800 pb-6">
+                {post.data.coverImage && (
+                    <div class="mb-6 overflow-hidden rounded-xl border border-slate-800 bg-slate-950">
+                        <Image
+                            src={post.data.coverImage}
+                            alt={post.data.coverAlt || post.data.title}
+                            width={940}
+                            height={788}
+                            class="aspect-[940/788] h-auto w-full object-contain"
+                            loading="eager"
+                        />
+                    </div>
+                )}
+
+                <time class="text-xs font-semibold uppercase tracking-wider text-amber-400">
+                    {post.data.date}
+                </time>
+
+                <h1 class="mt-2 text-2xl font-bold tracking-tight text-white sm:text-3xl">
+                    {post.data.title}
+                </h1>
+
+                <p class="mt-3 text-sm leading-relaxed text-slate-300 sm:text-base">
+                    {post.data.summary}
+                </p>
+            </header>
+
+            <div class="prose prose-invert mt-8 max-w-none space-y-4 text-sm leading-relaxed text-slate-200 sm:text-base">
+                <Content />
+            </div>
+
+            <footer class="mt-10 flex flex-wrap items-center justify-between gap-4 border-t border-slate-800 pt-6">
+                <a
+                    href={newsListHref}
+                    class="text-sm font-medium text-slate-300 transition hover:text-white"
+                >
+                    {backLabelMap[lang]}
+                </a>
+
+                <a
+                    href={`${prefix}/contact` || "/contact"}
+                    class="rounded-lg bg-amber-500 px-4 py-2 text-sm font-semibold text-slate-950 transition hover:bg-amber-400"
+                >
+                    {ctaLabelMap[lang]}
+                </a>
+            </footer>
+        </article>
+    </main>
+</BaseLayout>

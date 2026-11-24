@@ -1,0 +1,213 @@
+---
+import { Image } from "astro:assets";
+import cfe2027Img from "../assets/news/arres-cfe-2027.jpg";
+import type { Locale } from "../i18n/ui";
+
+interface Props {
+    lang: Locale;
+}
+
+const { lang } = Astro.props;
+const prefix = lang === "tr" ? "" : `/${lang}`;
+const isRtl = lang === "ar" || lang === "fa";
+
+const COPY: Record<
+    Locale,
+    {
+        eyebrow: string;
+        title: string;
+        highlight: string;
+        subtitle: string;
+        primaryCta: string;
+        secondaryCta: string;
+        panelTag: string;
+        panelTitle: string;
+        panelMeta: string;
+        stats: Array<{ label: string; value: string }>;
+    }
+> = {
+    tr: {
+        eyebrow: "ENDÜSTRİYEL MAKİNE & MÜHENDİSLİK ÇÖZÜMLERİ",
+        title: "Tuft Halı, Özel İmalat ve",
+        highlight: "Yüksek Hassasiyetli Mühendislik",
+        subtitle:
+            "Halı ve tekstil makinelerinden özel endüstriyel imalata, otomasyondan CNC talaşlı revizyona kadar anahtar teslim mühendislik çözümleri.",
+        primaryCta: "Teknik Teklif & İletişim",
+        secondaryCta: "Çalışma Grupları",
+        panelTag: "SAHA & FUAR VİTRİNİ",
+        panelTitle: "CFE Carpet & Flooring Expo 2027",
+        panelMeta: "Salon 2 • Stand 205 • İstanbul",
+        stats: [
+            { label: "İhracat & Birlik", value: "İHİB Üyesi" },
+            { label: "Fuar Lokasyonu", value: "Salon 2 / 205" },
+            { label: "Teknik Kapsam", value: "Tuft • CNC • Otomasyon" },
+        ],
+    },
+    en: {
+        eyebrow: "INDUSTRIAL MACHINERY & ENGINEERING SYSTEMS",
+        title: "Tufting Carpet, Custom Build &",
+        highlight: "Precision Industrial Engineering",
+        subtitle:
+            "End-to-end engineering solutions spanning carpet and textile machinery, bespoke industrial fabrication, automation, and CNC machining & overhaul.",
+        primaryCta: "Request Engineering Quote",
+        secondaryCta: "Working Groups",
+        panelTag: "FIELD & EXPO SHOWCASE",
+        panelTitle: "CFE Carpet & Flooring Expo 2027",
+        panelMeta: "Hall 2 • Booth 205 • Istanbul",
+        stats: [
+            { label: "Trade Body", value: "İHİB Member" },
+            { label: "Expo Location", value: "Hall 2 / 205" },
+            { label: "Core Scope", value: "Tuft • CNC • Automation" },
+        ],
+    },
+    ru: {
+        eyebrow: "ПРОМЫШЛЕННОЕ МАШИНОСТРОЕНИЕ И ИНЖИНИРИНГ",
+        title: "Тафтинг, спецтехника и",
+        highlight: "Точный промышленный инжиниринг",
+        subtitle:
+            "Комплексные инженерные решения: от оборудования для ковровой и текстильной отраслей до спецпроизводства, автоматизации и металлообработки с ЧПУ.",
+        primaryCta: "Запросить расчёт",
+        secondaryCta: "Направления работы",
+        panelTag: "ВЫСТАВКА И ПРОИЗВОДСТВО",
+        panelTitle: "CFE Carpet & Flooring Expo 2027",
+        panelMeta: "Зал 2 • Стенд 205 • Стамбул",
+        stats: [
+            { label: "Членство", value: "Член İHİB" },
+            { label: "Стенд выставки", value: "Зал 2 / 205" },
+            { label: "Компетенции", value: "Тафтинг • ЧПУ • Автоматика" },
+        ],
+    },
+    ar: {
+        eyebrow: "الماكينات الصناعية والحلول الهندسية",
+        title: "ماكينات التافت، التصنيع الخاص و",
+        highlight: "الهندسة الصناعية الدقيقة",
+        subtitle:
+            "حلول هندسية متكاملة تشمل معدات السجاد والنسيج، والتصنيع الصناعي المخصص، والأتمتة، وتشغيل CNC وإعادة التأهيل.",
+        primaryCta: "اطلب عرضًا فنيًا",
+        secondaryCta: "مجموعات العمل",
+        panelTag: "عرض المعرض والتطبيقات",
+        panelTitle: "CFE Carpet & Flooring Expo 2027",
+        panelMeta: "القاعة 2 • الجناح 205 • إسطنبول",
+        stats: [
+            { label: "العضوية", value: "عضو İHİB" },
+            { label: "موقع المعرض", value: "القاعة 2 / 205" },
+            { label: "المجالات", value: "تافت • CNC • أتمتة" },
+        ],
+    },
+    fa: {
+        eyebrow: "ماشین‌آلات صنعتی و راهکارهای مهندسی",
+        title: "تافتینگ فرش، ساخت سفارشی و",
+        highlight: "مهندسی صنعتی دقیق",
+        subtitle:
+            "راهکارهای مهندسی جامع از ماشین‌آلات فرش و نساجی تا ساخت صنعتی اختصاصی، اتوماسیون و ماشین‌کاری و بازسازی CNC.",
+        primaryCta: "درخواست مشاوره و پیشنهاد",
+        secondaryCta: "گروه‌های کاری",
+        panelTag: "ویترین نمایشگاه و اجرا",
+        panelTitle: "CFE Carpet & Flooring Expo 2027",
+        panelMeta: "سالن ۲ • غرفه ۲۰۵ • استانبول",
+        stats: [
+            { label: "عضویت تشکل", value: "عضو İHİB" },
+            { label: "جایگاه نمایشگاه", value: "سالن ۲ / ۲۰۵" },
+            { label: "حوزه تخصصی", value: "تافت • CNC • اتوماسیون" },
+        ],
+    },
+};
+
+const content = COPY[lang];
+---
+
+<section
+    dir={isRtl ? "rtl" : "ltr"}
+    aria-label={content.title}
+    class="arres-soft-shadow arres-soft-shadow-hover relative rounded-2xl border border-amber-500/30 bg-gradient-to-br from-[#070d1d] via-[#060b19] to-[#040710] p-6 transition-all duration-300 sm:p-8 lg:p-10"
+>
+    <!-- Hafif teknik ızgara katmanı -->
+    <div
+        aria-hidden="true"
+        class="pointer-events-none absolute inset-0 rounded-2xl opacity-[0.06]"
+        style="background-image: linear-gradient(to right, rgba(148,163,184,0.45) 1px, transparent 1px), linear-gradient(to bottom, rgba(148,163,184,0.45) 1px, transparent 1px); background-size: 32px 32px;"
+    />
+
+    <div class="relative grid grid-cols-1 items-center gap-8 lg:grid-cols-12 lg:gap-10">
+        <!-- Sol / Başlangıç Sütunu: Değer Önerisi & CTA -->
+        <div class="text-start lg:col-span-7">
+            <span class="inline-flex items-center gap-2 rounded-sm border border-amber-400/35 bg-amber-400/10 px-3 py-1 text-[11px] font-bold tracking-widest uppercase text-amber-300">
+                <span class="h-1.5 w-1.5 rounded-full bg-amber-400" />
+                {content.eyebrow}
+            </span>
+
+            <h1 class="mt-4 text-3xl font-bold leading-[1.12] tracking-tight text-white sm:text-4xl lg:text-[2.75rem]">
+                {content.title}{" "}
+                <span class="bg-gradient-to-r from-amber-300 via-amber-400 to-cyan-300 bg-clip-text text-transparent">
+                    {content.highlight}
+                </span>
+            </h1>
+
+            <p class="mt-4 max-w-2xl text-sm leading-relaxed text-slate-300 sm:text-base">
+                {content.subtitle}
+            </p>
+
+            <!-- Aksiyon Butonları -->
+            <div class="mt-6 flex flex-wrap items-center gap-3.5">
+                <a
+                    href={`${prefix}/contact`}
+                    class="inline-flex items-center justify-center rounded-md bg-amber-400 px-5 py-2.5 text-sm font-bold text-slate-950 transition-all duration-200 hover:-translate-y-0.5 hover:bg-amber-300"
+                >
+                    {content.primaryCta}
+                </a>
+
+                <a
+                    href={`${prefix}/#carpet-textile`}
+                    class="inline-flex items-center justify-center rounded-md border border-slate-700 bg-slate-900/80 px-5 py-2.5 text-sm font-semibold text-slate-100 transition-colors hover:border-cyan-400/60 hover:text-cyan-300"
+                >
+                    {content.secondaryCta}
+                </a>
+            </div>
+
+            <!-- Kısa Teknik Dayanaklar -->
+            <dl class="mt-8 grid grid-cols-1 gap-3 border-t border-slate-800/90 pt-5 sm:grid-cols-3">
+                {content.stats.map((item) => (
+                    <div class="rounded-lg border border-slate-800/80 bg-[#091022]/80 px-3.5 py-2.5">
+                        <dt class="text-[11px] font-medium text-slate-400">
+                            {item.label}
+                        </dt>
+                        <dd class="mt-0.5 text-xs font-bold text-slate-100 sm:text-sm">
+                            {item.value}
+                        </dd>
+                    </div>
+                ))}
+            </dl>
+        </div>
+
+        <!-- Sağ / Bitiş Sütunu: Teknik Vitrin Kartı -->
+        <div class="lg:col-span-5">
+            <div class="overflow-hidden rounded-xl border border-slate-800 bg-[#091124] shadow-xl">
+                <div class="relative aspect-[16/10] w-full overflow-hidden bg-slate-950">
+                    <Image
+                        src={cfe2027Img}
+                        alt={content.panelTitle}
+                        widths={[480, 768]}
+                        sizes="(max-width: 1024px) 100vw, 40vw"
+                        class="h-full w-full object-cover"
+                    />
+                    <div
+                        aria-hidden="true"
+                        class="pointer-events-none absolute inset-0 bg-gradient-to-t from-[#091124] via-transparent to-transparent"
+                    />
+                </div>
+
+                <div class="p-4 text-start sm:p-5">
+                    <span class="inline-flex items-center rounded-sm border border-cyan-400/30 bg-cyan-400/10 px-2.5 py-0.5 text-[10px] font-bold tracking-wider uppercase text-cyan-300">
+                        {content.panelTag}
+                    </span>
+                    <h2 class="mt-2 text-base font-bold text-white sm:text-lg">
+                        {content.panelTitle}
+                    </h2>
+                    <p class="mt-1 text-xs font-medium text-amber-300/90">
+                        {content.panelMeta}
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

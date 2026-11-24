@@ -1,0 +1,293 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import SiteHeader from "../../components/SiteHeader.astro";
+import { LOCALES, UI_STRINGS, type Locale } from "../../i18n/ui";
+
+export function getStaticPaths() {
+    return LOCALES.map((locale) => ({
+        params: { lang: locale === "tr" ? undefined : locale },
+        props: { lang: locale },
+    }));
+}
+
+const props = Astro.props as { lang?: Locale };
+const lang: Locale = props.lang && props.lang in UI_STRINGS ? props.lang : "tr";
+const t = UI_STRINGS[lang];
+const isRtl = lang === "ar" || lang === "fa";
+
+interface PolicySection {
+    title: string;
+    paragraphs: string[];
+    bullets?: string[];
+}
+
+interface PrivacyCopy {
+    badge: string;
+    pageTitle: string;
+    subtitle: string;
+    updatedLabel: string;
+    contactHeading: string;
+    emailLabel: string;
+    phoneLabel: string;
+    sections: PolicySection[];
+}
+
+const PRIVACY_COPY: Record<Locale, PrivacyCopy> = {
+    tr: {
+        badge: "YASAL BİLGİLENDİRME & GİZLİLİK",
+        pageTitle: "Gizlilik ve Çerez Politikası",
+        subtitle:
+            "Arres Mühendislik web sitesi üzerinden yürütülen bilgi edinme, teknik iletişim ve çerez/yerel depolama süreçlerine ilişkin bilgilendirme metnidir.",
+        updatedLabel: "Son Güncelleme: Kasım 2026",
+        contactHeading: "İletişim Bilgileri",
+        emailLabel: "E-posta",
+        phoneLabel: "Telefon",
+        sections: [
+            {
+                title: "1. Kapsam ve Amaç",
+                paragraphs: [
+                    "Bu metin, Arres Mühendislik kurumsal web sitesini ziyaret eden kullanıcıların erişim ve iletişim süreçlerinde gizliliğin korunmasına yönelik temel ilkeleri açıklar.",
+                ],
+            },
+            {
+                title: "2. Çerezler ve Yerel Depolama (Local Storage)",
+                paragraphs: [
+                    "Sitemiz, sayfa düzeni ve kullanıcı tercihlerinin hatırlanması amacıyla çerezler ve tarayıcı yerel depolama alanlarını kullanabilir.",
+                ],
+                bullets: [
+                    "Zorunlu / Tercih Kayıtları: Çerez bildirim tercihinin saklanması ve sayfa işlevlerinin sağlıklı çalışması için kullanılır.",
+                    "Gömülü Medya ve Dış Bağlantılar: Sayfalarda yer alan video oynatıcı veya harici bağlantılar ziyaret edildiğinde ilgili platformun kendi gizlilik ve çerez kuralları geçerli olabilir.",
+                ],
+            },
+            {
+                title: "3. İletişim ve Talep Kanalları",
+                paragraphs: [
+                    "Teknik teklif, proje görüşmeleri veya gizlilik ve çerez tercihlerinize ilişkin sorularınız için doğrudan bizimle iletişime geçebilirsiniz.",
+                ],
+            },
+        ],
+    },
+    en: {
+        badge: "LEGAL NOTICE & PRIVACY",
+        pageTitle: "Privacy & Cookie Policy",
+        subtitle:
+            "This notice outlines how Arres Mühendislik handles technical inquiries, site functionality, and cookies or local storage across our website.",
+        updatedLabel: "Last Updated: November 2026",
+        contactHeading: "Contact Details",
+        emailLabel: "Email",
+        phoneLabel: "Phone",
+        sections: [
+            {
+                title: "1. Scope and Purpose",
+                paragraphs: [
+                    "This policy describes our core privacy principles when you browse the Arres Mühendislik website or reach out regarding engineering and machinery solutions.",
+                ],
+            },
+            {
+                title: "2. Cookies and Local Storage",
+                paragraphs: [
+                    "We may use cookies and browser local storage to preserve basic functionality and remember user preferences.",
+                ],
+                bullets: [
+                    "Essential & Preference Storage: Used to store your cookie notice choice and maintain consistent site behavior.",
+                    "Embedded Media & External Links: When interacting with embedded video players or external links, the respective third-party provider's privacy and cookie terms may apply.",
+                ],
+            },
+            {
+                title: "3. Contact & Inquiries",
+                paragraphs: [
+                    "If you have questions regarding engineering quotes, working groups, or privacy and cookie preferences, please contact us directly.",
+                ],
+            },
+        ],
+    },
+    ru: {
+        badge: "ПРАВОВАЯ ИНФОРМАЦИЯ И КОНФИДЕНЦИАЛЬНОСТЬ",
+        pageTitle: "Политика конфиденциальности и cookie",
+        subtitle:
+            "Настоящий документ описывает подходы Arres Mühendislik к обработке обращений, работе сайта и использованию файлов cookie и локального хранилища.",
+        updatedLabel: "Обновлено: ноябрь 2026",
+        contactHeading: "Контактные данные",
+        emailLabel: "Электронная почта",
+        phoneLabel: "Телефон",
+        sections: [
+            {
+                title: "1. Область применения",
+                paragraphs: [
+                    "Политика определяет основные принципы защиты данных при посещении сайта Arres Mühendislik и обращении по вопросам промышленного оборудования и инжиниринга.",
+                ],
+            },
+            {
+                title: "2. Файлы cookie и локальное хранилище",
+                paragraphs: [
+                    "Сайт может использовать файлы cookie и локальное хранилище браузера для обеспечения корректной работы и сохранения пользовательских настроек.",
+                ],
+                bullets: [
+                    "Обязательные настройки и выбор пользователя: сохранение ответа на уведомление о cookie и стабильность работы интерфейса.",
+                    "Встроенный контент и внешние ссылки: при взаимодействии со встроенными плеерами или переходе по внешним ссылкам действуют правила соответствующих сторонних сервисов.",
+                ],
+            },
+            {
+                title: "3. Связь с нами",
+                paragraphs: [
+                    "По вопросам технических расчётов, направлений работы или настроек cookie вы можете связаться с нами напрямую по указанным контактам.",
+                ],
+            },
+        ],
+    },
+    ar: {
+        badge: "الإشعار القانوني والخصوصية",
+        pageTitle: "سياسة الخصوصية وملفات تعريف الارتباط",
+        subtitle:
+            "توضح هذه الوثيقة نهج أريس للهندسة فيما يتعلق بالاستفسارات الفنية وتشغيل الموقع واستخدام ملفات تعريف الارتباط والتخزين المحلي.",
+        updatedLabel: "آخر تحديث: نوفمبر 2026",
+        contactHeading: "بيانات التواصل",
+        emailLabel: "البريد الإلكتروني",
+        phoneLabel: "الهاتف",
+        sections: [
+            {
+                title: "1. النطاق والهدف",
+                paragraphs: [
+                    "تحدد هذه السياسة المبادئ الأساسية لحماية الخصوصية عند تصفح موقع أريس للهندسة أو التواصل بخصوص الماكينات والحلول الهندسية.",
+                ],
+            },
+            {
+                title: "2. ملفات تعريف الارتباط والتخزين المحلي",
+                paragraphs: [
+                    "قد يستخدم الموقع ملفات تعريف الارتباط والتخزين المحلي للمتصفح للحفاظ على الوظائف الأساسية وتذكر تفضيلات التصفح.",
+                ],
+                bullets: [
+                    "التخزين الضروري وتفضيلات المستخدم: لحفظ اختيارك في شريط ملفات تعريف الارتباط وضمان استقرار عمل الموقع.",
+                    "المحتوى المضمّن والروابط الخارجية: عند التفاعل مع مشغلات الفيديو المضمّنة أو الروابط الخارجية قد تُطبَّق سياسات الخصوصية الخاصة بالجهات المقدمة لها.",
+                ],
+            },
+            {
+                title: "3. التواصل والاستفسارات",
+                paragraphs: [
+                    "للاستفسار عن العروض الفنية أو مجموعات العمل أو إعدادات الخصوصية، يمكنكم التواصل معنا مباشرة عبر قنوات الاتصال أدناه.",
+                ],
+            },
+        ],
+    },
+    fa: {
+        badge: "اطلاعیه حقوقی و حریم خصوصی",
+        pageTitle: "سیاست حریم خصوصی و کوکی‌ها",
+        subtitle:
+            "این متن نحوه عملکرد آرس مهندسی در ارتباط با استعلام‌های فنی، عملکرد سایت و استفاده از کوکی‌ها و حافظه محلی را توضیح می‌دهد.",
+        updatedLabel: "آخرین به‌روزرسانی: آبان ۱۴۰۵",
+        contactHeading: "اطلاعات تماس",
+        emailLabel: "ایمیل",
+        phoneLabel: "تلفن",
+        sections: [
+            {
+                title: "1. دامنه و هدف",
+                paragraphs: [
+                    "این سیاست اصول پایه حفظ حریم خصوصی هنگام بازدید از وب‌سایت آرس مهندسی و پیگیری امور ماشین‌آلات و مهندسی صنعتی را مشخص می‌کند.",
+                ],
+            },
+            {
+                title: "2. کوکی‌ها و حافظه محلی",
+                paragraphs: [
+                    "این سایت ممکن است برای حفظ عملکردهای پایه و ذخیره تنظیمات کاربر از کوکی‌ها و حافظه محلی مرورگر استفاده کند.",
+                ],
+                bullets: [
+                    "ذخیره‌سازی ضروری و تنظیمات: برای ثبت انتخاب شما در نوار کوکی‌ها و پایداری عملکرد صفحات به‌کار می‌رود.",
+                    "محتوای جاسازی‌شده و لینک‌های بیرونی: در صورت استفاده از پخش‌کننده‌های ویدئویی جاسازی‌شده یا لینک‌های خارجی، ضوابط همان سرویس‌دهنده اعمال می‌شود.",
+                ],
+            },
+            {
+                title: "3. راه‌های ارتباطی",
+                paragraphs: [
+                    "برای دریافت مشاوره فنی، بررسی گروه‌های کاری یا پرسش درباره کوکی‌ها و حریم خصوصی می‌توانید مستقیماً با ما تماس بگیرید.",
+                ],
+            },
+        ],
+    },
+};
+
+const content = PRIVACY_COPY[lang];
+---
+
+<BaseLayout lang={lang} title={`${content.pageTitle} — ${t.siteTitle}`}>
+    <SiteHeader lang={lang} currentPath="privacy" />
+
+    <main
+        dir={isRtl ? "rtl" : "ltr"}
+        class="mx-auto max-w-5xl space-y-8 px-4 py-10 sm:py-12"
+    >
+        <section class="arres-soft-shadow rounded-2xl border border-amber-500/30 bg-[#070d1d] p-6 text-start sm:p-8">
+            <div class="flex flex-wrap items-center justify-between gap-3">
+                <span class="inline-flex items-center rounded-sm border border-amber-400/35 bg-amber-400/10 px-3 py-1 text-[11px] font-bold tracking-widest uppercase text-amber-300">
+                    {content.badge}
+                </span>
+                <span class="text-xs font-medium text-slate-400">
+                    {content.updatedLabel}
+                </span>
+            </div>
+
+            <h1 class="mt-4 text-2xl font-bold tracking-tight text-white sm:text-3xl">
+                {content.pageTitle}
+            </h1>
+            <p class="mt-3 max-w-3xl text-sm leading-relaxed text-slate-300 sm:text-base">
+                {content.subtitle}
+            </p>
+        </section>
+
+        <div class="space-y-6">
+            {content.sections.map((sec) => (
+                <section class="arres-soft-shadow rounded-xl border border-slate-800/90 bg-[#070d1d] p-6 text-start">
+                    <h2 class="text-lg font-bold text-white sm:text-xl">
+                        {sec.title}
+                    </h2>
+                    {sec.paragraphs.map((p) => (
+                        <p class="mt-3 text-sm leading-relaxed text-slate-300">
+                            {p}
+                        </p>
+                    ))}
+                    {sec.bullets && (
+                        <ul class="mt-4 space-y-2.5 border-t border-slate-800/80 pt-4 text-sm text-slate-300">
+                            {sec.bullets.map((b) => (
+                                <li class="flex items-start gap-2.5">
+                                    <span class="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-amber-400" />
+                                    <span>{b}</span>
+                                </li>
+                            ))}
+                        </ul>
+                    )}
+                </section>
+            ))}
+
+            <section class="arres-soft-shadow rounded-xl border border-amber-500/30 bg-[#091124] p-6 text-start">
+                <h2 class="text-lg font-bold text-white">
+                    {content.contactHeading}
+                </h2>
+                <div class="mt-4 flex flex-wrap gap-6 text-sm">
+                    <div>
+                        <span class="font-semibold text-amber-400">
+                            {content.phoneLabel}:{" "}
+                        </span>
+                        <a
+                            href="tel:+905327850576"
+                            dir="ltr"
+                            class="font-medium text-slate-200 transition-colors hover:text-amber-300"
+                        >
+                            +90 532 785 05 76
+                        </a>
+                    </div>
+                    <div>
+                        <span class="font-semibold text-amber-400">
+                            {content.emailLabel}:{" "}
+                        </span>
+                        <a
+                            href="mailto:info@arres.com.tr"
+                            dir="ltr"
+                            class="font-medium text-slate-200 transition-colors hover:text-amber-300"
+                        >
+                            info@arres.com.tr
+                        </a>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+</BaseLayout>

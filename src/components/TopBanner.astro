@@ -1,0 +1,77 @@
+---
+import type { Locale } from "../i18n/ui";
+
+interface Props {
+    lang: Locale;
+}
+
+const { lang } = Astro.props;
+const isRtl = lang === "ar" || lang === "fa";
+
+const phoneDisplay = "+90 532 785 05 76";
+const phoneHref = "tel:+905327850576";
+const emailAddress = "info@arres.com.tr";
+const emailHref = `mailto:${emailAddress}`;
+
+const LABELS: Record<Locale, { phoneLabel: string; emailLabel: string }> = {
+    tr: {
+        phoneLabel: "Tel",
+        emailLabel: "E-posta",
+    },
+    en: {
+        phoneLabel: "Phone",
+        emailLabel: "Email",
+    },
+    ru: {
+        phoneLabel: "Тел.",
+        emailLabel: "E-mail",
+    },
+    ar: {
+        phoneLabel: "هاتف",
+        emailLabel: "البريد الإلكتروني",
+    },
+    fa: {
+        phoneLabel: "تلفن",
+        emailLabel: "ایمیل",
+    },
+};
+
+const t = LABELS[lang];
+---
+
+<div
+    dir={isRtl ? "rtl" : "ltr"}
+    class="border-b border-slate-800/90 bg-[#040710] text-xs text-slate-300"
+>
+    <div class="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-x-6 gap-y-1.5 px-4 py-2 sm:px-6 lg:px-8">
+        <div class="flex flex-wrap items-center gap-x-5 gap-y-1 text-start">
+            <a
+                href={phoneHref}
+                class="inline-flex items-center gap-1.5 transition-colors hover:text-amber-300"
+            >
+                <span class="font-semibold text-amber-400">
+                    {t.phoneLabel}:
+                </span>
+                <span dir="ltr" class="font-medium text-slate-200">
+                    {phoneDisplay}
+                </span>
+            </a>
+
+            <span aria-hidden="true" class="text-slate-700">
+                |
+            </span>
+
+            <a
+                href={emailHref}
+                class="inline-flex items-center gap-1.5 transition-colors hover:text-amber-300"
+            >
+                <span class="font-semibold text-amber-400">
+                    {t.emailLabel}:
+                </span>
+                <span dir="ltr" class="font-medium text-slate-200">
+                    {emailAddress}
+                </span>
+            </a>
+        </div>
+    </div>
+</div>
