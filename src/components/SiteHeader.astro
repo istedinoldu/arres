@@ -1,6 +1,7 @@
 ---
 import { Image } from "astro:assets";
 import logoImg from "../assets/logo1.png";
+import logo2026 from "../assets/logo_2026.png";
 import TopBanner from "./TopBanner.astro";
 import { LOCALES, UI_STRINGS, type Locale } from "../i18n/ui";
 
@@ -31,7 +32,7 @@ const getPageHref = (
       class="flex items-center gap-3 text-lg font-bold tracking-tight text-white"
     >
       <Image
-        src={logoImg}
+        src={logo2026}
         alt={t.siteTitle}
         class="h-8 w-auto max-w-none object-contain sm:h-9"
         loading="eager"
