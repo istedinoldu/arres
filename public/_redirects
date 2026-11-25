@@ -1,0 +1,58 @@
+# Birebir içerik yönlendirmeleri (wildcard kurallardan önce gelmeli)
+/veri-bankasi/boru-bukme-makineleri-borularin-sekillendirilmesinde-inovatif-cozumler-223 /news/tr/boru-bukme-makineleri 301
+/veri-bankasi/boru-bukme-makineleri-borularin-sekillendirilmesinde-inovatif-cozumler-223/ /news/tr/boru-bukme-makineleri 301
+
+/veri-bankasi/cnc-dikey-isleme-merkezleri-hassas-isleme-teknolojisinin-lideri-220 /news/tr/cnc-dikey-isleme-merkezleri 301
+/veri-bankasi/cnc-dikey-isleme-merkezleri-hassas-isleme-teknolojisinin-lideri-220/ /news/tr/cnc-dikey-isleme-merkezleri 301
+
+/veri-bankasi/cnc-ve-universal-freze-cnc-ve-universal-torna-revizyon-islemi-makinelerin-performansini-yenileme-yontemleri-210 /news/tr/cnc-freze-ve-torna-revizyonu 301
+/veri-bankasi/cnc-ve-universal-freze-cnc-ve-universal-torna-revizyon-islemi-makinelerin-performansini-yenileme-yontemleri-210/ /news/tr/cnc-freze-ve-torna-revizyonu 301
+
+/haberler/arres-zemin-kaplamalari-sektorunde-oncu-yenilikleriyle-cfe-fuar-katilimcilarini-etkiledi /news/tr/arres-cfe-2023 301
+/haberler/arres-zemin-kaplamalari-sektorunde-oncu-yenilikleriyle-cfe-fuar-katilimcilarini-etkiledi/ /news/tr/arres-cfe-2023 301
+
+/en/uncategorized-en/arres-engineering-participated-in-cfe-carpet-flooring-expo-on-january-7-10-2025 /en/news/en/arres-cfe-2025 301
+/en/uncategorized-en/arres-engineering-participated-in-cfe-carpet-flooring-expo-on-january-7-10-2025/ /en/news/en/arres-cfe-2025 301
+
+# Haberler ana sayfası ve genel fallback
+/haberler /news 301
+/haberler/ /news 301
+/haberler/* /news 301
+
+# Eski Türkçe WordPress kategori yolları
+/category/haberler /news 301
+/category/haberler/ /news 301
+/category/haberler/* /news 301
+
+/category/veri-bankasi /news 301
+/category/veri-bankasi/ /news 301
+/category/veri-bankasi/* /news 301
+
+# Eski çok dilli ana sayfa yolları
+/en/anasayfa-english /en/ 301
+/en/anasayfa-english/ /en/ 301
+
+/ru/anasayfa-russian /ru/ 301
+/ru/anasayfa-russian/ /ru/ 301
+
+/ar/anasayfa-arabic /ar/ 301
+/ar/anasayfa-arabic/ /ar/ 301
+
+/fa/anasayfa-persian /fa/ 301
+/fa/anasayfa-persian/ /fa/ 301
+
+# Diğer dillerdeki eski WordPress kategori ve uncategorized yolları
+/en/category/* /en/news 301
+/en/uncategorized-en/* /en/news 301
+/ru/category/* /ru/news 301
+/ar/category/* /ar/news 301
+/fa/category/* /fa/news 301
+
+# Diğer dillerdeki olası /veri-bankasi yolları
+/en/veri-bankasi/* /news/en 301
+/ru/veri-bankasi/* /news/ru 301
+/ar/veri-bankasi/* /news/ar 301
+/fa/veri-bankasi/* /news/fa 301
+
+# Genel /veri-bankasi fallback (en altta kalmalı)
+/veri-bankasi/* /news 301
