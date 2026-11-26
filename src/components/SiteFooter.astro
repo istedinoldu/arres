@@ -38,6 +38,7 @@ const QUICK_LINKS: Record<
         address: string;
         phone: string;
         email: string;
+        whatsappLabel: string;
         copyright: string;
     }
 > = {
@@ -58,6 +59,7 @@ const QUICK_LINKS: Record<
             "Yakacık Çarşı Mah. Kartal Cad. Kastelli Sanayi Sitesi C Blok No:64 İç Kapı No:59 Kartal / İstanbul",
         phone: "+90 532 785 05 76",
         email: "info@arres.com.tr",
+        whatsappLabel: "WhatsApp İletişim",
         copyright:
             "© 2026 Arres Mühendislik Makine İmalat İthalat İhracat Sanayi Ticaret Limited Şirketi. Tüm hakları saklıdır.",
     },
@@ -78,6 +80,7 @@ const QUICK_LINKS: Record<
             "Yakacık Çarşı Mah. Kartal Cad. Kastelli Sanayi Sitesi C Blok No:64 İç Kapı No:59 Kartal / İstanbul",
         phone: "+90 532 785 05 76",
         email: "info@arres.com.tr",
+        whatsappLabel: "WhatsApp",
         copyright:
             "© 2026 Arres Mühendislik Makine İmalat İthalat İhracat Sanayi Ticaret Limited Şirketi. All rights reserved.",
     },
@@ -98,6 +101,7 @@ const QUICK_LINKS: Record<
             "Yakacık Çarşı Mah. Kartal Cad. Kastelli Sanayi Sitesi C Blok No:64 İç Kapı No:59 Kartal / İstanbul",
         phone: "+90 532 785 05 76",
         email: "info@arres.com.tr",
+        whatsappLabel: "WhatsApp",
         copyright:
             "© 2026 Arres Mühendislik Makine İmalat İthalat İhracat Sanayi Ticaret Limited Şirketi. Все права защищены.",
     },
@@ -118,6 +122,7 @@ const QUICK_LINKS: Record<
             "Yakacık Çarşı Mah. Kartal Cad. Kastelli Sanayi Sitesi C Blok No:64 İç Kapı No:59 Kartal / İstanbul",
         phone: "+90 532 785 05 76",
         email: "info@arres.com.tr",
+        whatsappLabel: "واتساب",
         copyright:
             "© 2026 Arres Mühendislik Makine İmalat İthalat İhracat Sanayi Ticaret Limited Şirketi. جميع الحقوق محفوظة.",
     },
@@ -138,12 +143,15 @@ const QUICK_LINKS: Record<
             "Yakacık Çarşı Mah. Kartal Cad. Kastelli Sanayi Sitesi C Blok No:64 İç Kapı No:59 Kartal / İstanbul",
         phone: "+90 532 785 05 76",
         email: "info@arres.com.tr",
+        whatsappLabel: "واتساپ",
         copyright:
             "© 2026 Arres Mühendislik Makine İmalat İthalat İhracat Sanayi Ticaret Limited Şirketi. تمامی حقوق محفوظ است.",
     },
 };
 
 const labels = QUICK_LINKS[lang];
+const whatsappDigits = labels.phone.replace(/\D/g, "");
+const whatsappUrl = `https://wa.me/${whatsappDigits}`;
 ---
 
 <footer
@@ -306,6 +314,25 @@ const labels = QUICK_LINKS[lang];
                             {labels.email}
                         </a>
                     </div>
+                </div>
+
+                <div class="pt-2">
+                    <a
+                        href={whatsappUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        class="inline-flex items-center gap-2 rounded-lg border border-emerald-500/40 bg-emerald-500/15 px-3.5 py-2 text-xs font-semibold text-emerald-300 transition-colors hover:border-emerald-400 hover:bg-emerald-500/25 hover:text-white"
+                    >
+                        <svg
+                            viewBox="0 0 24 24"
+                            fill="currentColor"
+                            class="h-4 w-4 shrink-0 text-emerald-400"
+                            aria-hidden="true"
+                        >
+                            <path d="M12.031 2c-5.516 0-9.969 4.453-9.969 9.969 0 1.758.459 3.473 1.331 4.986L2 22l5.182-1.359a9.927 9.927 0 0 0 4.849 1.262h.004c5.515 0 9.968-4.453 9.968-9.969 0-2.663-1.037-5.167-2.921-7.051A9.903 9.903 0 0 0 12.031 2zm5.818 14.281c-.245.691-1.425 1.321-1.976 1.404-.504.075-1.142.107-1.844-.116-.426-.135-.973-.316-1.674-.619-2.944-1.271-4.867-4.236-5.014-4.432-.147-.196-1.198-1.594-1.198-3.041s.758-2.158 1.028-2.453c.27-.294.589-.368.785-.368.196 0 .392.002.564.01.181.009.423-.069.662.505.245.589.834 2.036.907 2.183.074.147.123.319.025.515-.098.196-.147.319-.294.491-.147.172-.309.383-.441.515-.147.147-.3.306-.129.601.172.294.762 1.257 1.636 2.036 1.124 1.002 2.071 1.313 2.365 1.46.294.147.466.123.638-.074.172-.196.736-.859.932-1.153.196-.294.392-.245.662-.147.27.098 1.717.81 2.011.957.294.147.491.221.564.343.074.123.074.711-.171 1.402z" />
+                        </svg>
+                        <span>{labels.whatsappLabel}</span>
+                    </a>
                 </div>
             </div>
         </div>
